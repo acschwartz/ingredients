@@ -4,9 +4,18 @@ var ObjectId = require('mongodb').ObjectID;
 
 // insert api
 router.post('/insert', function(req, res, next) {
+
+  // TODO: check if product already in db
+  // TODO: ingredients as data objects
+
     // Insert the new task to the database
     // using callback
-    req.db.collection('schw1781_todo').insertOne({ "task": req.body.task, "done": 0 }, function(err, results){
+    var ingredientList = req.body.ingredients.replace(/\.|\?|!/g, '').split(',');  //may need more work on regex
+    for (i = 0; i < ingredientList.length; i++){
+      ingredientList[i] = ingredientList[i].trim().toLowerCase();
+    }
+
+    req.db.collection('products').insertOne({ 'pName': req.body.pName, 'ingredients': ingredientList }, function(err, results){
       if (err){
         console.log("error")
       } else{

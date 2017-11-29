@@ -13,7 +13,7 @@ var app = express();
 
 var MongoClient = require('mongodb').MongoClient;
 var expressMongoDb = require('express-mongo-db');
-var MongoURI = 'mongodb://5117:5117iscool@ec2-54-175-174-41.compute-1.amazonaws.com:80/5117-f17-individual-hw';
+var MongoURI = 'mongodb://abc:123@ds125016.mlab.com:25016/ingredientsdb';
 app.use(expressMongoDb(MongoURI));
 
 

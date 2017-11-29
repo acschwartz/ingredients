@@ -1,14 +1,24 @@
 <!-- Client side template file. You are not expected to change this file. -->
 
 <div id="myDIV" class="header">
-  <h1>My To Do List</h1>
-  <input type="text" id="todoInput" placeholder="I need to...">
-  <span id="addTodo" class="addBtn">Add</span>
+  <h1>Add Product</h1>
+  <input type="text" id="inputProductName" placeholder="Product Name">
+  <input type="text" id="inputIngredients" placeholder="Ingredients (comma separated)">
+  <span id="addProduct" class="addBtn">Add</span>
+
 </div>
 
 <div>
     <ul>
-    {{#each todo}}
+    {{#each products}}
+        <li class="task" id="product_{{this._id}}"><b>{{ this.pName }}</b><span class="close" id="close_{{this._id}}">&#10799</span>
+          <li>
+            {{#each this.ingredients}}
+              {{ this }},
+            {{/each}}
+          </li>
+        </li>
+
         {{#if this.done}}
             <li class="task checked" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799</span></li>
         {{else}}

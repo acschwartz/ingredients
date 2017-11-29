@@ -1,10 +1,11 @@
 // Client side javascript code. You are not expected to change this file.
 
 $(function() {
-    $("#addTodo").click(function(){
-      var newTask = $("#todoInput").val();
-      if (newTask){
-        $.post( "/api/insert", { task: newTask })
+    $('#addProduct').click(function(){
+      var newPName = $('#inputProductName').val();
+      var newIngr = $('#inputIngredients').val();
+      if (!!newPName & !!newIngr){
+        $.post( "/api/insert", { pName: newPName, ingredients: newIngr })
         .done(function( data ) {
           location.reload();
         });
