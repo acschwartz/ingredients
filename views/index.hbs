@@ -1,0 +1,19 @@
+<!-- Client side template file. You are not expected to change this file. -->
+
+<div id="myDIV" class="header">
+  <h1>My To Do List</h1>
+  <input type="text" id="todoInput" placeholder="I need to...">
+  <span id="addTodo" class="addBtn">Add</span>
+</div>
+
+<div>
+    <ul>
+    {{#each todo}}
+        {{#if this.done}}
+            <li class="task checked" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799</span></li>
+        {{else}}
+            <li class="task" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799</span></li>
+        {{/if}}
+    {{/each}}
+    </ul>
+</div>
