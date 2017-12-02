@@ -16,8 +16,6 @@ var expressMongoDb = require('express-mongo-db');
 var MongoURI = 'mongodb://abc:123@ds125016.mlab.com:25016/ingredientsdb';
 app.use(expressMongoDb(MongoURI));
 
-
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 

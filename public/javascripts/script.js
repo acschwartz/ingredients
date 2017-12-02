@@ -2,8 +2,9 @@
 
 $(function() {
     $('#addProduct').click(function(){
-      var newPName = $('#inputProductName').val();
-      var newIngr = $('#inputIngredients').val();
+      console.log('Hello from #addProduct click handler');
+      var newPName = $.trim( $('#inputProductName').val() );
+      var newIngr = $.trim( $('#inputIngredients').val() );
       if (!!newPName & !!newIngr){
         $.post( "/api/insert", { pName: newPName, ingredients: newIngr })
         .done(function( data ) {
