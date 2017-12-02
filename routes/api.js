@@ -2,12 +2,17 @@ var express = require('express');
 var router = express.Router();
 var ObjectId = require('mongodb').ObjectID;
 
+// function insertProduct(req){
+//
+// }
+
 // insert api
 router.post('/insert', function(req, res, next) {
 
   // check that fields are not null done on client side in script.js
-  // TODO: check if product already in db
   // TODO: handle error if product already in db
+    // don't need to check bc unique index prevents insert... simply need to handle error
+    // display error message on client side
   // TODO: ingredients as data objects
 
 

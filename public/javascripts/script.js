@@ -3,8 +3,10 @@
 $(function() {
     $('#addProduct').click(function(){
       console.log('Hello from #addProduct click handler');
-      var newPName = $.trim( $('#inputProductName').val() );
-      var newIngr = $.trim( $('#inputIngredients').val() );
+      // var newPName = $.trim( $('#inputProductName').val() );
+      // var newIngr = $.trim( $('#inputIngredients').val() );
+      var newPName = $('#inputProductName').val().trim();
+      var newIngr = $('#inputIngredients').val().trim();
       if (!!newPName & !!newIngr){
         $.post( "/api/insert", { pName: newPName, ingredients: newIngr })
         .done(function( data ) {
