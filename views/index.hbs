@@ -11,7 +11,9 @@
 <div>
     <ul>
     {{#each products}}
-        <li class="task" id="product_{{this._id}}"><b>{{ this._id }}</b><span class="close" id="close_{{this._id}}">&#10799</span>
+        <li class="task" id="product_{{this._id}}"><b>{{ this._id }}</b>
+          <span class="good" id="good_{{this._id}}">&nbsp; &nbsp; good</span>
+          <span class="bad" id="bad_{{this._id}}">&nbsp; &nbsp; bad</span>
           <li>
             {{#each this.ingredients}}
               {{ this }},
@@ -20,9 +22,9 @@
         </li>
 
         {{#if this.done}}
-            <li class="task checked" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799</span></li>
+            <li class="task checked" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799 b</span></li>
         {{else}}
-            <li class="task" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799</span></li>
+            <li class="task" id="task_{{this._id}}">{{ this.task }}<span class="close" id="close_{{this._id}}">&#10799 c</span></li>
         {{/if}}
     {{/each}}
     </ul>

@@ -15,6 +15,15 @@ $(function() {
       }
     });
 
+    $('.good').click(function(){
+        var productId = $(this).attr('id').substring(5);
+        console.log(productId);
+        $.post( "/api/addgood", { id: productId })
+        .done(function( data ) {
+            location.reload();
+        });
+    });
+
     $('.close').click(function(){
         var taskid = $(this).attr('id').substring(6);
         $.post( "/api/delete", { id: taskid })

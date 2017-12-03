@@ -43,6 +43,72 @@ router.post('/insert', function(req, res, next) {
 
 });
 
+// delete api for TODO list/template
+router.post('/addgood', function(req, res, next) {
+    // Add product to good list
+    // using promise
+
+    var productId = req.body.id;
+
+    // Add P to to pGood
+    req.db.collection('pGood').insertOne({ _id: productId }).then(function(results){
+      console.log("pGood insert complete");
+      //send success status to client side
+    }).catch(function(error){
+      throw error;
+    }); // TODO: deal with unhandled promise rejection when P is already in pGood (or do findAndModify)
+
+    // If P is in pBad, remove it
+    req.db.collection('pBad').deleteOne( { _id: productId } ).then(function(results){
+      console.log("pBad delete complete");
+      //send success status to client side
+    }).catch(function(error){
+      throw error;
+    });
+
+    ingredients = [];
+    req.db.collection('products').find( { _id: productId }, {ingredients: 1} ).toArray()
+    .then( (results) => {
+        ingredients = results[0].ingredients;
+      })
+    .then( () => {
+      // for each ingredient...
+      for (i = 0; i < ingredients.length; i++){
+        ((j) => { // the j parametric variable is passed in on invocation of this IIFE
+
+          // if ingredient is NOT in iGood, add it (w/ count of 1)
+          // otherwise, increment its count
+          req.db.collection('iGood').findAndModify(
+            { _id: ingredients[j] }, //query
+            [], //sort
+            { $setOnInsert: { _id: ingredients[j], count: 0 }, $inc: { count: 1 } }, // update
+            { new: true,   // return new doc if one is upserted (unnecessary here)
+            upsert: true},
+            (err, result) => {
+              console.log(result.value._id);
+              // TODO: handle error I guess
+
+              // if ingredient is in iBad, remove it
+              req.db.collection('iBad').deleteOne( { _id: result.value._id } )
+              .then( (results) => {
+                console.log("iBad delete complete");
+              })
+              .catch(function(error){
+                throw error;
+              });
+            });
+          })(i);
+      } // for
+    })
+    .then( () => {
+      //send success status to client side
+      res.status(200).send('success');
+    });
+
+
+    console.log("async"); // TODO: this is just an example, remove later
+
+});
 
 // delete api for TODO list/template
 router.post('/delete', function(req, res, next) {
