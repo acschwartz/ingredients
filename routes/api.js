@@ -75,8 +75,7 @@ router.post('/addgood', function(req, res, next) {
       for (i = 0; i < ingredients.length; i++){
         ((j) => { // the j parametric variable is passed in on invocation of this IIFE
 
-          // if ingredient is NOT in iGood, add it (w/ count of 1)
-          // otherwise, increment its count
+          // if ingredient is NOT in iGood, add it (w/ count of 0)
           req.db.collection('iGood').findAndModify(
             { _id: ingredients[j] }, //query
             [], //sort
@@ -86,6 +85,7 @@ router.post('/addgood', function(req, res, next) {
             (err, result) => {
               if (err) { return console.log(err);}
 
+              // otherwise, increment count of each ingredient (now new ingredient is at 1)
               req.db.collection('iGood').findAndModify(
                 { _id: result.value._id }, [], { $inc: { count: 1 } } , {},
                 (err, result) => {
