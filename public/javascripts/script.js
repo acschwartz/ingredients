@@ -20,7 +20,16 @@ $(function() {
         console.log(productId);
         $.post( "/api/addgood", { id: productId })
         .done(function( data ) {
-            location.reload();
+            location.reload();  // TODO: idk if this is needed here
+        });
+    });
+
+    $('.bad').click(function(){
+        var productId = $(this).attr('id').substring(4);
+        console.log(productId);
+        $.post( "/api/addbad", { id: productId })
+        .done(function( data ) {
+            location.reload();  // TODO: idk if this is needed here
         });
     });
 
