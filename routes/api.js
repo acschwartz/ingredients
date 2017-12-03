@@ -40,8 +40,33 @@ router.post('/insert', function(req, res, next) {
 
 });
 
+function addProductIdToCollection( db, coll, id ){
+  db.collection(coll).insertOne({ _id: id })
+  .then(function(results){
+    console.log(coll + " insert complete");
+  })
+  .catch(function(error){
+    throw error;
+  });
+}
 
+// add product and its ingredients to 'good list'
+router.post('/addgood', function(req, res, next) {
+  var productId = req.body.id;
 
+  addProductIdToCollection( req.db, 'pGood', productId );
+
+  // res.status(200).send('success');
+});
+
+// add product and its ingredients to 'bad list'
+router.post('/addbad', function(req, res, next) {
+  var productId = req.body.id;
+
+  addProductIdToCollection( req.db, 'pBad', productId );
+
+  // res.status(200).send('success');
+});
 
 
 
