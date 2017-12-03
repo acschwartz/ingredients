@@ -86,13 +86,16 @@ function ifNotExistsInsertWithCount ( db, coll, id ){
 }
 
 
+// TODO: BUG: I feel like sometimes ingredients get incremented all on their own??
+
 // add product and its ingredients to 'good list'
 router.post('/addgood', function(req, res, next) {
   var productId = req.body.id;
   var ingredients = [];
 
   insertRecord( req.db, 'pGood', { _id: productId } );
-  deleteRecordById( req.db, 'pBad', productId );
+  // TODO: need more sophisticated check for existence of record... see further down
+  // deleteRecordById( req.db, 'pBad', productId );
 
   req.db.collection('products').find( { _id: productId }, {ingredients: 1} ).toArray()
   .then( (results) => {
@@ -105,25 +108,60 @@ router.post('/addgood', function(req, res, next) {
         // if ingredient is NOT in iGood, add it
         ifExistsIncrementCount( req.db, 'iGood', thisIngredient, 1, ifNotExistsInsertWithCount );
 
+        // TODO: BUG: Adding same product more than once increments counts when it shouldn't...
+        // need a check for if the profuct already exists in pGood. if so, ignore ingredients steps
+
         // if ingredient is in iBad, remove it
         // TODO: in future, may want to make it inactive
-        deleteRecordById( req.db, 'iBad', thisIngredient );
+        // deleteRecordById( req.db, 'iBad', thisIngredient );
 
       })(ingredients[i]); // arg for thisIngredient
     } // for
   })
 
-  // res.status(200).send('success');
+  res.status(200).send('success');
 });
 
 
 // add product and its ingredients to 'bad list'
 router.post('/addbad', function(req, res, next) {
   var productId = req.body.id;
+  var ingredients = [];
 
-  addProductIdToCollection( req.db, 'pBad', productId );
+  insertRecord( req.db, 'pBad', { _id: productId } );
 
-  // res.status(200).send('success');
+  // TODO: for now, adding to bad list does NOT delete from good list (product NOR ingredient)
+
+  // deleteRecordById( req.db, 'pGood', productId ); // TODO: BUG: if delete from good list, must decrement iGood, right?!
+
+  // ~~FOR NOW, iGood is a whitelist. being in iGood prevents an ingredients
+  // from being added to iBad. TODO: revisit later~~
+  // ABOVE: STRIKE THAT LOL... let's just track everything?
+
+  req.db.collection('products').find( { _id: productId }, {ingredients: 1} ).toArray()
+  .then( (results) => {
+      ingredients = results[0].ingredients;
+      console.log('ingredients = ' +  ingredients);
+  }).then( () => {
+    (function(){
+      for (i = 0; i < ingredients.length; i++){
+        ((thisIngredient) => {
+          // // if ingredient is NOT in iGood, add or increment in iBad
+          // req.db.collection('iGood').count( { _id: thisIngredient } )
+          // .then ( (results) => {
+          //   console.log(results);
+          //   if (results < 1){
+              ifExistsIncrementCount(req.db, 'iBad', thisIngredient, 1, ifNotExistsInsertWithCount);
+              // TODO: BUG: Adding same product more than once increments counts when it shouldn't...
+              // need a check for if the profuct already exists in pGood. if so, ignore ingredients steps
+
+        })(ingredients[i]); // arg for thisIngredient
+      } // for
+    })();
+  })
+
+
+  res.status(200).send('success');
 });
 
 
