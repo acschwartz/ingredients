@@ -1,6 +1,9 @@
 # ingredients
 
-# Database Decisons
+## This is what  I am using to standardize ingredient names:
+https://www.skincarisma.com/ingredient-analyzer
+
+# Database Decisions
 Collections:
 
 products[ { _id: "product name here", ingredients: [ "id", "id", "id" ] } ]

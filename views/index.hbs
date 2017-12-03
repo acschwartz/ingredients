@@ -13,6 +13,7 @@
     {{#each products}}
         <li class="task" id="product_{{this._id}}"><b>{{ this._id }}</b>
           <span class="good" id="good_{{this._id}}">&nbsp; &nbsp; good</span>
+          <span class="notsure" id="notsure_{{this._id}}">&nbsp; &nbsp; not sure</span>
           <span class="bad" id="bad_{{this._id}}">&nbsp; &nbsp; bad</span>
           <li>
             {{#each this.ingredients}}

@@ -20,7 +20,16 @@ $(function() {
         console.log(productId);
         $.post( "/api/addgood", { id: productId })
         .done(function( data ) {
-            location.reload();  // TODO: idk if this is needed here
+            location.reload();  // TODO: idk if this is needed here ? find out
+        });
+    });
+
+    $('.notsure').click(function(){
+        var productId = $(this).attr('id').substring(8);
+        console.log(productId);
+        $.post( "/api/addnotsure", { id: productId })
+        .done(function( data ) {
+            location.reload();  // TODO: idk if this is needed here ? find out
         });
     });
 
@@ -29,7 +38,7 @@ $(function() {
         console.log(productId);
         $.post( "/api/addbad", { id: productId })
         .done(function( data ) {
-            location.reload();  // TODO: idk if this is needed here
+            location.reload();  // TODO: idk if this is needed here? find out
         });
     });
 

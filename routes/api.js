@@ -122,6 +122,38 @@ router.post('/addgood', function(req, res, next) {
   res.status(200).send('success');
 });
 
+// add product and its ingredients to 'notsure list'
+router.post('/addnotsure', function(req, res, next) {
+  var productId = req.body.id;
+  var ingredients = [];
+
+  insertRecord( req.db, 'pNotSure', { _id: productId } );
+  // TODO: need more sophisticated check for existence of record... see further down
+  // deleteRecordById( req.db, 'pBad', productId );
+
+  req.db.collection('products').find( { _id: productId }, {ingredients: 1} ).toArray()
+  .then( (results) => {
+      ingredients = results[0].ingredients;
+      console.log('ingredients = ' +  ingredients);
+  }).then( () => {
+    for (i = 0; i < ingredients.length; i++){
+      ((thisIngredient) => {
+        // if ingredient is in iGood already, increment its count
+        // if ingredient is NOT in iGood, add it
+        ifExistsIncrementCount( req.db, 'iNotSure', thisIngredient, 1, ifNotExistsInsertWithCount );
+
+        // TODO: BUG: Adding same product more than once increments counts when it shouldn't...
+        // need a check for if the profuct already exists in pGood. if so, ignore ingredients steps
+
+      })(ingredients[i]); // arg for thisIngredient
+    } // for
+  })
+
+  res.status(200).send('success');
+});
+
+
+// TODO: now that I'm not handling any logic in the add functions, I can modularize
 
 // add product and its ingredients to 'bad list'
 router.post('/addbad', function(req, res, next) {
