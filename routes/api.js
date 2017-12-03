@@ -40,24 +40,84 @@ router.post('/insert', function(req, res, next) {
 
 });
 
+  // TODO: deal with "UnhandledPromiseRejectionWarning: Unhandled promise rejection
+  // (rejection id: 1): MongoError: E11000 duplicate key error [..]"
 function addProductIdToCollection( db, coll, id ){
   db.collection(coll).insertOne({ _id: id })
-  .then(function(results){
-    console.log(coll + " insert complete");
+  .then( (results) => {
+    console.log("insert " + id + " into " + coll + " complete");
   })
-  .catch(function(error){
+  .catch( (error) => {
     throw error;
   });
 }
 
+function deleteProductIdFromCollection( db, coll, id ){
+  db.collection(coll).deleteOne({ _id: id })
+  .then( (results) =>{
+    console.log( /* "delete " + id + " from " + coll + " complete"*/ );
+  })
+  .catch( (error) => {
+    throw error;
+  });
+}
+
+
+function ifExistsIncrementCount(db, coll, id, step, callback){
+  // increments 'count' field of an existing record
+  db.collection(coll).findAndModify(
+    { _id: id }
+    , []
+    , { $inc: { count: step } })
+  .then( (result) => { /* console.log(result) */ } )
+  .then( callback( db, coll, id ) )
+  .catch( (error) => {
+    throw error;
+  });
+}
+
+function ifNotExistsInsertWithCount ( db, coll, id ){
+  db.collection(coll).count( { _id: id } )
+  .then( (results) => {
+    if (results < 1){
+      db.collection(coll).insertOne( { _id: id, count: 1 } )
+      .then( (results) =>{
+        console.log("insert " + id + " into " + coll + " complete");
+      })
+      .catch( (error) => {
+        throw error;
+      });
+    }
+  });
+};
+
+
 // add product and its ingredients to 'good list'
 router.post('/addgood', function(req, res, next) {
   var productId = req.body.id;
+  var ingredients = [];
 
   addProductIdToCollection( req.db, 'pGood', productId );
+  deleteProductIdFromCollection( req.db, 'pBad', productId );
+
+  req.db.collection('products').find( { _id: productId }, {ingredients: 1} ).toArray()
+  .then( (results) => {
+      ingredients = results[0].ingredients;
+      console.log('ingredients = ' +  ingredients);
+  }).then( () => {
+    // for each ingredient...
+    for (i = 0; i < ingredients.length; i++){
+      ((thisIngredient) => {
+        // if ingredient is in iGood already, increment its count
+        // if ingredient is NOT in iGood, add it
+        ifExistsIncrementCount( req.db, 'iGood', thisIngredient, 1, ifNotExistsInsertWithCount );
+      })(ingredients[i]); // arg for thisIngredient
+    } // for
+  })
 
   // res.status(200).send('success');
 });
+
 
 // add product and its ingredients to 'bad list'
 router.post('/addbad', function(req, res, next) {
