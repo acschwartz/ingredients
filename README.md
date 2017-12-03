@@ -1,8 +1,21 @@
 # ingredients
 
-# database decisons
-products: unique index on pName (pName must be unique now)
-ingredients: _id is ingredient name (may want to do same for product?)
+# Database Decisons
+Collections:
+
+products[ { _id: "product name here", ingredients: [ "id", "id", "id" ] } ]
+ingredients[ { _id: "ingredient name here" } ]
+
+Product and ingredient names were chosen for the _id field as they are to be unique anyway.
+
+Other planned collections:
+
+pGood [ { _id: "ref product _id" } ]  - good products
+pBad [ { _id: "ref product _id" } ]  - bad products
+iGood [ { _id: "ref ingredient _id", count: n} ]  - good ingredients
+iBad [ { _id: "ref ingredient _id", count: n} ]  - bad ingredients
+
+This turned out disastrous; see below.
 
 # Challenges
 ## Get list of ingredient _id's into products document
