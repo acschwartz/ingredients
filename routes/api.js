@@ -6,39 +6,36 @@ var ObjectId = require('mongodb').ObjectID;
 // insert api
 router.post('/insert', function(req, res, next) {
 
-  // If ingredient not in db, insert it
   var ingredients = req.body.ingredients.replace(/\.|\?|!/g, '').split(',');  //may need more work on regex
-  for (i = 0; i < ingredients.length; i++) {
-    ingredients[i] = function(j) {  // the j parametric variable is passed in on invocation of this IIFE
-      var ing = ingredients[j].trim().toLowerCase();
-      req.db.collection('ingredients').findAndModify(   // TODO: may want to just make this Update
-        { _id: ing }, //query
-        [], //sort
-        { $setOnInsert: { _id: ing } }, // update
-        { new: true,   // return new doc if one is upserted
-        upsert: true});
-      return ing;
-    }(i);
-  }
 
-  (function insertProduct(){
-    // Insert the new product to the database using callback
-    req.db.collection('products').insertOne({ '_id': req.body.pName, 'ingredients': ingredients },
-      function(err, results){
+  (function addIngredients (){
+  // If ingredient not in db, insert it
+
+    for (i = 0; i < ingredients.length; i++) {
+      ingredients[i] = function(j) {  // the j parametric variable is passed in on invocation of this IIFE
+
+        var ing = ingredients[j].trim().toLowerCase();
+        req.db.collection('ingredients').updateOne( { _id: ing }, { $set: { _id: ing } }, { upsert: true }
+          , (err, results) => {
+              if (err) { console.log(err) }
+              // else { console.log(' ingredient inserted or updated ') }
+          });
+        return ing;
+      }(i);
+    }
+  })();
+
+  (function addProduct() {
+  // Insert the new product to the database (using callback)
+    req.db.collection('products').insertOne({ '_id': req.body.pName, 'ingredients': ingredients }, (err, results) => {
         if (err){
-          console.log("insert product error")
+          console.log("insert product error: " + err)
         } else{
           console.log("insert complete")
           //send success status to client side
           res.status(200).send('success');
         }
     });
-
-    console.log("async"); // see when this prints - could print before insert is done
-    // which is why we want to put "insert done"/'success' in the callback, and not below
-
-    //send success status to client side
-    // res.status(200).send('success');
   })();
 
 });
