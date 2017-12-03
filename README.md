@@ -21,9 +21,14 @@ Use IIFE ([Immediately Invoked Function Expression](http://javascriptissexy.com/
 
 ## Logic
 CRUD logic for products and ingredients. More complicated than it may seem.
+When a product is added to the list, are all of its ingredients deleted from the bad list?
+I first had the good list be a whitelist that prevented any of its ingredients from going on the bad list.
+ But what if some of those ingredients are on the bad list from a previous entry? What happens when I deleted
+ an item from the good list? When you add a product to the good list, you delete its ingredients from the bad list? What about the other way around?
+
 
 ## Database/Schema Design
 
 Initial idea: pGood, pBad, iGood, iBad collections. Was hoping to either
 a) Be able to control what shows up in the good/bad lists through CRUD logic (wayyyy too messy)
-b) Be able to query the union between two collections. This was my lesson that this isn't SQL
+b) Be able to query the union between two collections. This was my lesson that this isn't SQL. Similar objects that will be compared should not be in different collections.
